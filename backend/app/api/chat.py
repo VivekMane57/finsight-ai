@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from backend.app.services.search_service import SearchService
+from backend.app.services.llm_service import LLMService
 
 router = APIRouter()
 
@@ -13,11 +14,17 @@ class QueryRequest(BaseModel):
 @router.post("/query")
 def query_documents(data: QueryRequest):
 
-    chunks = SearchService.search(
-        data.query
+    sources = SearchService.search(data.query)
+
+    answer = LLMService.generate_answer(
+        query=data.query,
+        sources=sources
     )
 
     return {
         "query": data.query,
-        "retrieved_chunks": chunks
+        "answer": answer,
+        "retrieval_method": "hybrid_faiss_bm25_with_citations",
+        "sources_used": len(sources),
+        "sources": sources
     }

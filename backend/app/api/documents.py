@@ -7,6 +7,7 @@ from backend.app.services.document_processor import DocumentProcessor
 from backend.app.services.chunking import ChunkingService
 from backend.app.services.embedding_service import EmbeddingService
 from backend.app.services.faiss_store import FaissStore
+from backend.app.services.bm25_store import BM25Store
 
 router = APIRouter()
 
@@ -30,13 +31,15 @@ async def upload_document(file: UploadFile = File(...)):
 
     embeddings = EmbeddingService.create_embeddings(chunks)
 
-    index = FaissStore.build_index(embeddings)
+    faiss_index = FaissStore.build_index(embeddings)
 
-    index_path = os.path.join(VECTORSTORE_DIR, "faiss_index.pkl")
+    BM25Store.build_index(chunks)
+
+    faiss_index_path = os.path.join(VECTORSTORE_DIR, "faiss_index.pkl")
     chunks_path = os.path.join(VECTORSTORE_DIR, "chunks.pkl")
 
-    with open(index_path, "wb") as f:
-        pickle.dump(index, f)
+    with open(faiss_index_path, "wb") as f:
+        pickle.dump(faiss_index, f)
 
     with open(chunks_path, "wb") as f:
         pickle.dump(chunks, f)
@@ -46,5 +49,7 @@ async def upload_document(file: UploadFile = File(...)):
         "characters": len(extracted_text),
         "chunks": len(chunks),
         "embedding_dimension": len(embeddings[0]) if len(embeddings) > 0 else 0,
-        "status": "indexed"
+        "faiss_status": "indexed",
+        "bm25_status": "indexed",
+        "status": "hybrid_indexed"
     }

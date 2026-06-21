@@ -52,12 +52,10 @@ It processes annual reports and financial documents, performs Hybrid RAG-based r
 ---
 
 # Architecture
-
+# RAG Pipeline
+<img width="729" height="1704" alt="mermaid-diagram (1)" src="https://github.com/user-attachments/assets/12f54123-6d2e-4af9-87c7-cd30cf9ace77" />
 ```mermaid
 flowchart TD
-RAG Pipeline
-<img width="729" height="1704" alt="mermaid-diagram (1)" src="https://github.com/user-attachments/assets/12f54123-6d2e-4af9-87c7-cd30cf9ace77" />
-
 
 A[User Upload PDF]
 --> B[FastAPI Backend]
@@ -98,11 +96,10 @@ P --> S
 ---
 
 # LangGraph Workflow
+<img width="3347" height="129" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c83c2c72-2b6a-4edf-997b-55aee3c262e9" />
 
 ```mermaid
 flowchart LR
-<img width="3347" height="129" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c83c2c72-2b6a-4edf-997b-55aee3c262e9" />
-
 
 A[User Query]
 --> B[Retrieval Agent]

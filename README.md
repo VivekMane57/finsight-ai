@@ -96,7 +96,6 @@ P --> S
 ---
 
 # LangGraph Workflow
-<img width="3347" height="129" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c83c2c72-2b6a-4edf-997b-55aee3c262e9" />
 
 ```mermaid
 flowchart LR

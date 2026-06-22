@@ -1,4 +1,7 @@
 # FinSight AI – Financial Intelligence Copilot
+![RAG](https://img.shields.io/badge/RAG-Hybrid-orange)
+![FAISS](https://img.shields.io/badge/FAISS-VectorDB-blue)
+![BM25](https://img.shields.io/badge/BM25-Retrieval-yellow)
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-red)
@@ -14,7 +17,10 @@
 
 FinSight AI is an AI-powered Financial Intelligence Copilot designed for analysts, bankers, auditors, fintech teams, NBFCs, and credit risk teams.
 
+Hybrid RAG + Agentic AI Financial Intelligence Platform for Financial Analysis, Credit Risk Assessment and Investment Insights.
+
 It processes annual reports and financial documents, performs Hybrid RAG-based retrieval, answers financial questions, generates analyst-style summaries, extracts KPIs, assesses credit risk, and generates investment insights using Azure OpenAI and LangGraph.
+
 
 ---
 

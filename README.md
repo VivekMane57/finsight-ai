@@ -5,6 +5,31 @@ FinSight AI is an AI-powered Financial Intelligence Copilot designed for analyst
 It processes annual reports and financial documents, performs Hybrid RAG-based retrieval, answers financial questions, generates analyst-style summaries, extracts KPIs, assesses credit risk, and generates investment insights using Azure OpenAI and LangGraph.
 
 ---
+# Docker Deployment
+
+## Build
+
+```bash
+docker compose build --no-cache
+```
+
+## Run
+
+```bash
+docker compose up
+```
+
+## Access
+
+Frontend:
+http://localhost:8501
+
+Backend Docs:
+http://localhost:8000/docs
+
+```
+```
+
 
 ## Key Features
 

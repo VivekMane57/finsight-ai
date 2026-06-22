@@ -489,7 +489,6 @@ python -m streamlit run frontend/app.py
 * JWT Authentication
 * Chat History
 * PDF Report Export
-* Docker Deployment
 * Multi-Company Comparison
 * Fraud Detection Agent
 

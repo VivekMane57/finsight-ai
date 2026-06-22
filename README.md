@@ -130,6 +130,157 @@ F --> G[Final Financial Report]
 | Language       | Python                   |
 
 ---
+# Docker Deployment
+
+## Prerequisites
+
+* Docker Desktop
+* Docker Compose
+
+Verify installation:
+
+```bash
+docker --version
+docker compose version
+```
+
+---
+
+## Clone Repository
+
+```bash
+git clone https://github.com/VivekMane57/finsight-ai.git
+cd finsight-ai
+```
+
+---
+
+## Configure Environment Variables
+
+Create a `.env` file in the project root.
+
+```env
+AZURE_OPENAI_API_KEY=YOUR_API_KEY
+AZURE_OPENAI_ENDPOINT=YOUR_ENDPOINT
+AZURE_OPENAI_API_VERSION=2024-02-15-preview
+AZURE_OPENAI_DEPLOYMENT=YOUR_DEPLOYMENT_NAME
+```
+
+---
+
+## Build Containers
+
+```bash
+docker compose build --no-cache
+```
+
+---
+
+## Run Application
+
+```bash
+docker compose up
+```
+
+Run in background:
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Access Application
+
+### Streamlit Frontend
+
+```text
+http://localhost:8501
+```
+
+### FastAPI Swagger Documentation
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+## Stop Containers
+
+```bash
+docker compose down
+```
+
+---
+
+## Docker Architecture
+
+```text
+┌─────────────────────┐
+│   Streamlit UI      │
+│    Port : 8501      │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   FastAPI Backend   │
+│    Port : 8000      │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Hybrid Retrieval   │
+│   FAISS + BM25      │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Azure OpenAI LLM    │
+└─────────────────────┘
+```
+
+---
+
+## Features
+
+* Financial Document Upload
+* Hybrid RAG (FAISS + BM25)
+* Financial Q&A
+* Financial Summary Generation
+* KPI Dashboard
+* Credit Risk Analysis
+* Investment Analysis
+* LangGraph Agentic Workflow
+* Dockerized Deployment
+* Azure OpenAI Integration
+
+---
+
+## Tech Stack
+
+### Backend
+
+* FastAPI
+* Python
+* Azure OpenAI
+* LangGraph
+
+### Retrieval
+
+* FAISS
+* BM25
+* Scikit-Learn
+
+### Frontend
+
+* Streamlit
+
+### Deployment
+
+* Docker
+* Docker Compose
+
 
 # Project Structure
 

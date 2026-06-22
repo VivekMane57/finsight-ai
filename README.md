@@ -5,6 +5,17 @@ FinSight AI is an AI-powered Financial Intelligence Copilot designed for analyst
 It processes annual reports and financial documents, performs Hybrid RAG-based retrieval, answers financial questions, generates analyst-style summaries, extracts KPIs, assesses credit risk, and generates investment insights using Azure OpenAI and LangGraph.
 
 ---
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)
+![FAISS](https://img.shields.io/badge/FAISS-Vector_Search-orange)
+![BM25](https://img.shields.io/badge/BM25-Hybrid_RAG-yellow)
+![Azure OpenAI](https://img.shields.io/badge/Azure_OpenAI-GPT4o-0078D4)
+![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_AI-purple)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-ML_Model-green)
+![SHAP](https://img.shields.io/badge/SHAP-Explainability-red)
+
 # Docker Deployment
 
 ## Build

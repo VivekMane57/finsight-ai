@@ -16,7 +16,7 @@ class SearchService:
         with open("vectorstore/chunks.pkl", "rb") as f:
             chunks = pickle.load(f)
 
-        query_embedding = EmbeddingService.model.encode([query])
+        query_embedding = EmbeddingService.create_query_embedding(query)
         query_embedding = np.array(query_embedding).astype("float32")
 
         distances, indices = index.search(query_embedding, top_k)

@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
+from langsmith import traceable
 
 load_dotenv()
 
@@ -23,6 +24,7 @@ class LLMService:
         return context
 
     @staticmethod
+    @traceable(name="FinSight Generate Answer")
     def generate_answer(query: str, sources: list[dict]) -> str:
         context = LLMService._build_context(sources)
 
@@ -66,6 +68,7 @@ Final Answer:
         return response.choices[0].message.content
 
     @staticmethod
+    @traceable(name="FinSight Financial Summary")
     def generate_financial_summary(sources: list[dict]) -> str:
         context = LLMService._build_context(sources)
 
@@ -115,6 +118,7 @@ Final Financial Analyst Report:
         return response.choices[0].message.content
 
     @staticmethod
+    @traceable(name="FinSight Credit Risk Analysis")
     def generate_credit_risk_analysis(sources: list[dict]) -> str:
         context = LLMService._build_context(sources)
 
@@ -168,6 +172,7 @@ Final Credit Risk Report:
         return response.choices[0].message.content
 
     @staticmethod
+    @traceable(name="FinSight Custom Analysis")
     def generate_custom_analysis(prompt: str, sources: list[dict]) -> str:
         context = LLMService._build_context(sources)
 
@@ -206,6 +211,7 @@ Final Report:
         return response.choices[0].message.content
 
     @staticmethod
+    @traceable(name="FinSight KPI Extraction")
     def extract_kpis(sources: list[dict]) -> str:
         context = LLMService._build_context(sources)
 

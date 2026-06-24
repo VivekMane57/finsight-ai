@@ -1,6 +1,3 @@
-from sentence_transformers import CrossEncoder
-
-
 class RerankerService:
     model = None
     available = False
@@ -31,9 +28,18 @@ class RerankerService:
         RerankerService._load_model()
 
         if not RerankerService.available:
-            return documents[:top_k]
+            fallback_results = []
+
+            for doc in documents[:top_k]:
+                updated_doc = doc.copy()
+                updated_doc["rerank_score"] = None
+                updated_doc["rerank_method"] = "fallback_hybrid_order"
+                fallback_results.append(updated_doc)
+
+            return fallback_results
 
         pairs = [(query, doc["chunk"]) for doc in documents]
+
         scores = RerankerService.model.predict(pairs)
 
         reranked_docs = []

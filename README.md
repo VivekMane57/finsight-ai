@@ -23,6 +23,9 @@ It processes annual reports and financial documents, performs Hybrid RAG-based r
 
 
 ---
+## 🎥 Demo Video
+
+https://github.com/user-attachments/assets/fd5e49ce-0fd8-449d-a88a-6fe1d004b5cf
 
 # Docker Deployment
 

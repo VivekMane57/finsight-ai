@@ -13,7 +13,6 @@
 
 FinSight AI reads annual reports and other financial PDFs, answers questions with source citations, extracts KPIs, and produces analyst-style reports with an explainable credit-risk view. It is built for analysts, bankers, auditors, NBFCs and credit-risk teams who need answers they can trace back to a page.
 
-**Live demo:** [add your Azure Web App URL here, or remove this line]
 
 ## Demo
 

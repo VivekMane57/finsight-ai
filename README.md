@@ -1,508 +1,225 @@
-# FinSight AI – Financial Intelligence Copilot
-![RAG](https://img.shields.io/badge/RAG-Hybrid-orange)
-![FAISS](https://img.shields.io/badge/FAISS-VectorDB-blue)
-![BM25](https://img.shields.io/badge/BM25-Retrieval-yellow)
+# FinSight AI: Financial Intelligence Copilot
+
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-red)
-![RAG](https://img.shields.io/badge/RAG-Hybrid-orange)
-![FAISS](https://img.shields.io/badge/FAISS-VectorDB-blue)
-![BM25](https://img.shields.io/badge/BM25-Retrieval-yellow)
 ![Azure OpenAI](https://img.shields.io/badge/Azure-OpenAI-0078D4)
 ![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_AI-purple)
-![Sentence Transformers](https://img.shields.io/badge/SentenceTransformers-Embeddings-brown)
-![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![FAISS](https://img.shields.io/badge/FAISS-Dense_Retrieval-blue)
+![BM25](https://img.shields.io/badge/BM25-Sparse_Retrieval-yellow)
 ![XGBoost](https://img.shields.io/badge/XGBoost-Credit_Risk-darkgreen)
-![SHAP](https://img.shields.io/badge/SHAP-Explainable_AI-red)
+![SHAP](https://img.shields.io/badge/SHAP-Explainability-red)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 
-FinSight AI is an AI-powered Financial Intelligence Copilot designed for analysts, bankers, auditors, fintech teams, NBFCs, and credit risk teams.
+FinSight AI reads annual reports and other financial PDFs, answers questions with source citations, extracts KPIs, and produces analyst-style reports with an explainable credit-risk view. It is built for analysts, bankers, auditors, NBFCs and credit-risk teams who need answers they can trace back to a page.
 
-Hybrid RAG + Agentic AI Financial Intelligence Platform for Financial Analysis, Credit Risk Assessment and Investment Insights.
+**Live demo:** [add your Azure Web App URL here, or remove this line]
 
-It processes annual reports and financial documents, performs Hybrid RAG-based retrieval, answers financial questions, generates analyst-style summaries, extracts KPIs, assesses credit risk, and generates investment insights using Azure OpenAI and LangGraph.
-
-
----
-## 🎥 Demo Video
+## Demo
 
 https://github.com/user-attachments/assets/fd5e49ce-0fd8-449d-a88a-6fe1d004b5cf
 
-# Docker Deployment
+## What it does
 
-## Build
+| Capability | How |
+| --- | --- |
+| Source-grounded Q&A | Hybrid retrieval (FAISS + BM25) with cross-encoder reranking and page-level citations |
+| Financial summary | LLM summary over retrieved sections of the report |
+| KPI extraction | Pulls key ratios and figures into a dashboard |
+| Credit risk | XGBoost risk model with SHAP explanations, combined with an LLM risk narrative |
+| Investment insights | LLM analysis built on the retrieved evidence |
+| Agentic report | LangGraph workflow that chains retrieval, summary, credit risk and a final analyst step |
 
-```bash
-docker compose build --no-cache
-```
+## Architecture
 
-## Run
+### Retrieval and analysis pipeline
 
-```bash
-docker compose up
-```
-
-## Access
-
-Frontend:
-http://localhost:8501
-
-Backend Docs:
-http://localhost:8000/docs
-
-```
-```
-
-
-## Key Features
-
-### Document Intelligence
-
-* PDF Upload
-* Text Extraction using PyMuPDF
-* Smart Chunking
-* Financial Document Indexing
-
-### Hybrid RAG Pipeline
-
-* Sentence Transformers Embeddings
-* FAISS Semantic Search
-* BM25 Keyword Search
-* Hybrid Retrieval
-* Source Citations
-
-### AI Capabilities
-
-* Financial Q&A
-* Financial Summary Generation
-* Credit Risk Analysis
-* Investment Recommendation
-* KPI Extraction
-
-### Agentic AI
-
-* LangGraph Multi-Agent Workflow
-* Retrieval Agent
-* Financial Summary Agent
-* Credit Risk Agent
-* Final Analyst Agent
-
-### Dashboard
-
-* Upload Document
-* Chat with Document
-* Financial Summary
-* KPI Dashboard
-* Credit Risk
-* Agentic Report
-* Investment Analysis
-
----
-
-# Architecture
-# RAG Pipeline
-<img width="729" height="1704" alt="mermaid-diagram (1)" src="https://github.com/user-attachments/assets/12f54123-6d2e-4af9-87c7-cd30cf9ace77" />
 ```mermaid
 flowchart TD
-
-A[User Upload PDF]
---> B[FastAPI Backend]
-
-B --> C[Document Processor]
-C --> D[Text Extraction]
-D --> E[Chunking]
-
-E --> F[Embeddings]
-F --> G[FAISS Index]
-
-E --> H[BM25 Index]
-
-G --> I[Hybrid Retriever]
-H --> I
-
-I --> J[Retrieved Chunks]
-
-J --> K[Azure OpenAI]
-
-K --> L[Financial Q&A]
-K --> M[Financial Summary]
-K --> N[Credit Risk Analysis]
-K --> O[Investment Analysis]
-K --> P[KPI Extraction]
-
-M --> Q[LangGraph Agents]
-N --> Q
-
-Q --> R[Final Agentic Report]
-
-L --> S[Streamlit Dashboard]
-R --> S
-O --> S
-P --> S
+    A[PDF upload] --> B[FastAPI backend]
+    B --> C[PyMuPDF text extraction]
+    C --> D[Chunking]
+    D --> E[Sentence Transformers embeddings]
+    E --> F[(FAISS index)]
+    D --> G[(BM25 index)]
+    F --> H[Hybrid retriever]
+    G --> H
+    H --> I[Cross-encoder reranker]
+    I --> J[Top chunks with citations]
+    J --> K[Azure OpenAI GPT-4o-mini]
+    K --> L[Q&A]
+    K --> M[Summary]
+    K --> N[KPI extraction]
+    K --> O[Investment analysis]
+    J --> P[XGBoost credit-risk model + SHAP]
+    P --> Q[Credit risk]
+    L --> R[Streamlit dashboard]
+    M --> R
+    N --> R
+    O --> R
+    Q --> R
 ```
 
----
-
-# LangGraph Workflow
+### LangGraph agent workflow
 
 ```mermaid
 flowchart LR
-
-A[User Query]
---> B[Retrieval Agent]
-
-B --> C[Hybrid RAG]
-
-C --> D[Summary Agent]
-
-D --> E[Credit Risk Agent]
-
-E --> F[Final Analyst Agent]
-
-F --> G[Final Financial Report]
+    A[User query] --> B[Retrieval agent]
+    B --> C[Summary agent]
+    C --> D[Credit risk agent]
+    D --> E[Final analyst agent]
+    E --> F[Final financial report]
 ```
 
----
+## Design decisions
 
-# Tech Stack
+**Why hybrid retrieval.** Financial documents mix meaning-based questions ("what does the company say about liquidity risk?") with exact-term lookups ("Gross NPA ratio", a specific year). Dense search handles the first well and blurs the second. BM25 covers exact terms, so the two are combined.
+[Add one line on how you merge scores, for example weighted scores or rank fusion.]
 
-| Layer          | Technology               |
-| -------------- | ------------------------ |
-| Frontend       | Streamlit                |
-| Backend        | FastAPI                  |
-| LLM            | Azure OpenAI GPT-4o-mini |
-| RAG            | FAISS + BM25             |
-| Embeddings     | Sentence Transformers    |
-| Agents         | LangGraph                |
-| PDF Processing | PyMuPDF                  |
-| Language       | Python                   |
+**Why a reranker.** The retriever returns a broad candidate set. A cross-encoder ([model name]) rescoring the query and each chunk together puts the most relevant chunks first before they reach the LLM.
 
----
-# Docker Deployment
+**Why XGBoost and SHAP next to an LLM.** An LLM can describe risk but cannot show which inputs drove a score. The XGBoost model gives a numeric risk output and SHAP shows which features pushed it up or down, so a reviewer can check the reasoning.
 
-## Prerequisites
+## Credit risk model
 
-* Docker Desktop
-* Docker Compose
+- **Target and features:** [describe what the model predicts and the main input features]
+- **Data:** [dataset name or source, and whether it is synthetic or public]
+- **Result:** [metric such as AUC or F1 on a held-out set]
+- **Explainability:** SHAP values per prediction, shown in the dashboard as [summary plot or feature contribution chart]
 
-Verify installation:
+## Evaluation
 
-```bash
-docker --version
-docker compose version
-```
+The RAG pipeline is evaluated with RAGAS, LangSmith tracing and an LLM-as-judge check.
 
----
+| Metric | Result |
+| --- | --- |
+| Faithfulness | [value] |
+| Answer relevancy | [value] |
+| Context recall | [value] |
 
-## Clone Repository
+Test set: [number of questions] questions over [which public reports]. [Add one honest sentence about where it still fails, for example tables split across chunks.]
 
-```bash
-git clone https://github.com/VivekMane57/finsight-ai.git
-cd finsight-ai
-```
+## Tech stack
 
----
+| Layer | Technology |
+| --- | --- |
+| Frontend | Streamlit |
+| Backend | FastAPI, Python 3.11 |
+| LLM | Azure OpenAI GPT-4o-mini |
+| Retrieval | FAISS, BM25, Sentence Transformers, cross-encoder reranker |
+| Agents | LangGraph |
+| Credit risk | XGBoost, SHAP, Scikit-Learn |
+| Evaluation | RAGAS, LangSmith |
+| PDF processing | PyMuPDF |
+| Deployment | Docker, Docker Compose |
 
-## Configure Environment Variables
+## Quick start
 
-Create a `.env` file in the project root.
-
-```env
-AZURE_OPENAI_API_KEY=YOUR_API_KEY
-AZURE_OPENAI_ENDPOINT=YOUR_ENDPOINT
-AZURE_OPENAI_API_VERSION=2024-02-15-preview
-AZURE_OPENAI_DEPLOYMENT=YOUR_DEPLOYMENT_NAME
-```
-
----
-
-## Build Containers
-
-```bash
-docker compose build --no-cache
-```
-
----
-
-## Run Application
-
-```bash
-docker compose up
-```
-
-Run in background:
-
-```bash
-docker compose up -d
-```
-
----
-
-## Access Application
-
-### Streamlit Frontend
-
-```text
-http://localhost:8501
-```
-
-### FastAPI Swagger Documentation
-
-```text
-http://localhost:8000/docs
-```
-
----
-
-## Stop Containers
-
-```bash
-docker compose down
-```
-
----
-
-## Docker Architecture
-
-```text
-┌─────────────────────┐
-│   Streamlit UI      │
-│    Port : 8501      │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│   FastAPI Backend   │
-│    Port : 8000      │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│  Hybrid Retrieval   │
-│   FAISS + BM25      │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Azure OpenAI LLM    │
-└─────────────────────┘
-```
-
----
-
-## Features
-
-* Financial Document Upload
-* Hybrid RAG (FAISS + BM25)
-* Financial Q&A
-* Financial Summary Generation
-* KPI Dashboard
-* Credit Risk Analysis
-* Investment Analysis
-* LangGraph Agentic Workflow
-* Dockerized Deployment
-* Azure OpenAI Integration
-
----
-
-## Tech Stack
-
-### Backend
-
-* FastAPI
-* Python
-* Azure OpenAI
-* LangGraph
-
-### Retrieval
-
-* FAISS
-* BM25
-* Scikit-Learn
-
-### Frontend
-
-* Streamlit
-
-### Deployment
-
-* Docker
-* Docker Compose
-
-
-# Project Structure
-
-```text
-finsight-ai/
-
-backend/
-│
-├── api/
-│   ├── documents.py
-│   ├── chat.py
-│   ├── analysis.py
-│   ├── kpi.py
-│   ├── agents.py
-│   └── investment.py
-│
-├── services/
-│   ├── document_processor.py
-│   ├── chunking.py
-│   ├── embedding_service.py
-│   ├── faiss_store.py
-│   ├── bm25_store.py
-│   ├── search_service.py
-│   └── llm_service.py
-│
-├── agents/
-│   ├── financial_graph.py
-│   └── investment_agent.py
-│
-└── main.py
-
-frontend/
-└── app.py
-
-uploads/
-vectorstore/
-
-README.md
-requirements.txt
-```
-
----
-
-# API Endpoints
-
-### Upload Document
-
-POST /documents/upload
-
-### Financial Q&A
-
-POST /chat/query
-
-### Financial Summary
-
-POST /analysis/financial-summary
-
-### Credit Risk Analysis
-
-POST /analysis/credit-risk
-
-### KPI Extraction
-
-GET /kpi/financial-kpis
-
-### Agentic Report
-
-POST /agents/financial-intelligence
-
-### Investment Analysis
-
-POST /analysis/investment-analysis
-
----
-
-# Installation
-
-## Clone Repository
+### Option 1: Docker
 
 ```bash
 git clone https://github.com/VivekMane57/finsight-ai.git
 cd finsight-ai
 ```
 
-## Create Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-## Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-## Create .env
+Create a `.env` file in the project root:
 
 ```env
 AZURE_OPENAI_API_KEY=your_key
 AZURE_OPENAI_ENDPOINT=your_endpoint
-AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
 AZURE_OPENAI_API_VERSION=2024-02-15-preview
+AZURE_OPENAI_DEPLOYMENT=your_deployment_name
 ```
 
----
+Build and run:
 
-# Run Backend
+```bash
+docker compose build --no-cache
+docker compose up
+```
+
+- Frontend: http://localhost:8501
+- API docs (Swagger): http://localhost:8000/docs
+
+Stop with `docker compose down`.
+
+### Option 2: Local
+
+```bash
+python -m venv venv
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # macOS / Linux
+pip install -r requirements.txt
+```
+
+Add the same `.env` file, then run the backend and frontend in two terminals:
 
 ```bash
 uvicorn backend.app.main:app --reload
 ```
 
-Swagger:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
----
-
-# Run Frontend
-
 ```bash
 python -m streamlit run frontend/app.py
 ```
 
----
+## API endpoints
 
-# Resume Highlights
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/documents/upload` | Upload and index a document |
+| POST | `/chat/query` | Source-grounded financial Q&A |
+| POST | `/analysis/financial-summary` | Financial summary |
+| POST | `/analysis/credit-risk` | Credit risk analysis |
+| GET | `/kpi/financial-kpis` | KPI extraction |
+| POST | `/agents/financial-intelligence` | Full agentic report |
+| POST | `/analysis/investment-analysis` | Investment analysis |
 
-* Built FinSight AI, an Agentic Financial Intelligence Copilot using FastAPI, Streamlit, Azure OpenAI, LangGraph, FAISS, BM25, and Sentence Transformers.
-* Implemented Hybrid RAG combining FAISS semantic retrieval and BM25 keyword search.
-* Developed Financial Summary, Credit Risk, KPI Extraction, and Investment Analysis agents.
-* Built LangGraph multi-agent workflow with Retrieval Agent, Summary Agent, Credit Risk Agent, and Final Analyst Agent.
-* Designed an end-to-end AI application with document upload, source-grounded Q&A, KPI dashboards, and financial analysis.
+## Project structure
 
----
+```text
+finsight-ai/
+├── backend/
+│   └── app/
+│       ├── api/
+│       │   ├── documents.py
+│       │   ├── chat.py
+│       │   ├── analysis.py
+│       │   ├── kpi.py
+│       │   ├── agents.py
+│       │   └── investment.py
+│       ├── services/
+│       │   ├── document_processor.py
+│       │   ├── chunking.py
+│       │   ├── embedding_service.py
+│       │   ├── faiss_store.py
+│       │   ├── bm25_store.py
+│       │   ├── search_service.py
+│       │   └── llm_service.py
+│       ├── agents/
+│       │   ├── financial_graph.py
+│       │   └── investment_agent.py
+│       └── main.py
+├── frontend/
+│   └── app.py
+├── uploads/
+├── vectorstore/
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
+```
 
-# Current Status
+[Add the files for the credit-risk model and the evaluation scripts to this tree.]
 
-| Module            | Status |
-| ----------------- | ------ |
-| PDF Upload        | ✅      |
-| Text Extraction   | ✅      |
-| FAISS Retrieval   | ✅      |
-| BM25 Retrieval    | ✅      |
-| Hybrid RAG        | ✅      |
-| Azure OpenAI      | ✅      |
-| Source Citations  | ✅      |
-| Financial Summary | ✅      |
-| KPI Dashboard     | ✅      |
-| Credit Risk Agent | ✅      |
-| LangGraph Agents  | ✅      |
-| Investment Agent  | ✅      |
+## Roadmap
 
----
+- PostgreSQL for persistent storage
+- JWT authentication
+- Chat history
+- PDF report export
+- Multi-company comparison
+- Fraud detection agent
 
-# Future Improvements
+## Disclaimer
 
-* PostgreSQL Integration
-* JWT Authentication
-* Chat History
-* PDF Report Export
-* Multi-Company Comparison
-* Fraud Detection Agent
-
----
-
-# Disclaimer
-
-This project is for educational and portfolio purposes only and does not provide financial advice.
+This project is for educational and portfolio purposes only. It does not provide financial advice.

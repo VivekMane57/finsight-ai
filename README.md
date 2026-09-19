@@ -13,7 +13,6 @@
 
 FinSight AI reads annual reports and other financial PDFs, answers questions with source citations, extracts KPIs, and produces analyst-style reports with an explainable credit-risk view. It is built for analysts, bankers, auditors, NBFCs and credit-risk teams who need answers they can trace back to a page.
 
-
 ## Demo
 
 https://github.com/user-attachments/assets/fd5e49ce-0fd8-449d-a88a-6fe1d004b5cf
@@ -73,30 +72,14 @@ flowchart LR
 ## Design decisions
 
 **Why hybrid retrieval.** Financial documents mix meaning-based questions ("what does the company say about liquidity risk?") with exact-term lookups ("Gross NPA ratio", a specific year). Dense search handles the first well and blurs the second. BM25 covers exact terms, so the two are combined.
-[Add one line on how you merge scores, for example weighted scores or rank fusion.]
 
-**Why a reranker.** The retriever returns a broad candidate set. A cross-encoder ([model name]) rescoring the query and each chunk together puts the most relevant chunks first before they reach the LLM.
+**Why a reranker.** The retriever returns a broad candidate set. A cross-encoder rescoring the query and each chunk together puts the most relevant chunks first before they reach the LLM.
 
 **Why XGBoost and SHAP next to an LLM.** An LLM can describe risk but cannot show which inputs drove a score. The XGBoost model gives a numeric risk output and SHAP shows which features pushed it up or down, so a reviewer can check the reasoning.
-
-## Credit risk model
-
-- **Target and features:** [describe what the model predicts and the main input features]
-- **Data:** [dataset name or source, and whether it is synthetic or public]
-- **Result:** [metric such as AUC or F1 on a held-out set]
-- **Explainability:** SHAP values per prediction, shown in the dashboard as [summary plot or feature contribution chart]
 
 ## Evaluation
 
 The RAG pipeline is evaluated with RAGAS, LangSmith tracing and an LLM-as-judge check.
-
-| Metric | Result |
-| --- | --- |
-| Faithfulness | [value] |
-| Answer relevancy | [value] |
-| Context recall | [value] |
-
-Test set: [number of questions] questions over [which public reports]. [Add one honest sentence about where it still fails, for example tables split across chunks.]
 
 ## Tech stack
 
@@ -207,8 +190,6 @@ finsight-ai/
 ├── requirements.txt
 └── README.md
 ```
-
-[Add the files for the credit-risk model and the evaluation scripts to this tree.]
 
 ## Roadmap
 

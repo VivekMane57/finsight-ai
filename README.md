@@ -11,7 +11,7 @@
 ![SHAP](https://img.shields.io/badge/SHAP-Explainability-red)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 
-FinSight AI reads annual reports and other financial PDFs, answers questions with source citations, extracts KPIs, and produces analyst-style reports with an explainable credit-risk view. It is built for analysts, bankers, auditors, NBFCs and credit-risk teams who need answers they can trace back to a page.
+FinSight AI reads annual reports and other financial PDFs, answers questions with source citations, extracts KPIs, and produces analyst-style reports. It also includes a separate machine-learning credit-risk predictor with SHAP explanations. It is built for analysts, bankers, auditors, NBFCs and credit-risk teams who need answers they can trace back to a source.
 
 ## Demo
 
@@ -19,18 +19,20 @@ https://github.com/user-attachments/assets/fd5e49ce-0fd8-449d-a88a-6fe1d004b5cf
 
 ## What it does
 
-| Capability | How |
+| Dashboard tab | How it works |
 | --- | --- |
-| Source-grounded Q&A | Hybrid retrieval (FAISS + BM25) with cross-encoder reranking and page-level citations |
-| Financial summary | LLM summary over retrieved sections of the report |
-| KPI extraction | Pulls key ratios and figures into a dashboard |
-| Credit risk | XGBoost risk model with SHAP explanations, combined with an LLM risk narrative |
-| Investment insights | LLM analysis built on the retrieved evidence |
-| Agentic report | LangGraph workflow that chains retrieval, summary, credit risk and a final analyst step |
+| Chat with Document | Hybrid retrieval (FAISS + BM25) with cross-encoder reranking and source citations |
+| Financial Summary | LLM summary over retrieved sections of the report |
+| KPI Dashboard | Pulls key ratios and figures into a dashboard |
+| Credit Risk | Lender-style credit risk report for the uploaded annual report, written by the LLM from retrieved evidence |
+| Agentic Report | LangGraph workflow that chains retrieval, summary, credit risk and a final analyst step |
+| Investment Analysis | LLM analysis built on the retrieved evidence |
+| LLM Evaluation | Custom RAG metrics, RAGAS and LLM-as-judge on a query of your choice |
+| ML Credit Risk | XGBoost model that predicts default probability, credit score and risk level from applicant details, with SHAP explanations |
 
 ## Architecture
 
-### Retrieval and analysis pipeline
+### Document pipeline (RAG)
 
 ```mermaid
 flowchart TD
@@ -48,14 +50,13 @@ flowchart TD
     K --> L[Q&A]
     K --> M[Summary]
     K --> N[KPI extraction]
-    K --> O[Investment analysis]
-    J --> P[XGBoost credit-risk model + SHAP]
-    P --> Q[Credit risk]
+    K --> O[Credit risk report]
+    K --> P[Investment analysis]
     L --> R[Streamlit dashboard]
     M --> R
     N --> R
     O --> R
-    Q --> R
+    P --> R
 ```
 
 ### LangGraph agent workflow
@@ -69,17 +70,62 @@ flowchart LR
     E --> F[Final financial report]
 ```
 
+### ML credit-risk predictor (separate from the document pipeline)
+
+```mermaid
+flowchart LR
+    A[Applicant details form] --> B[XGBoost model]
+    B --> C[Default probability]
+    C --> D[Credit score and risk level]
+    B --> E[SHAP explanation]
+    D --> F[Streamlit dashboard]
+    E --> F
+```
+
 ## Design decisions
 
 **Why hybrid retrieval.** Financial documents mix meaning-based questions ("what does the company say about liquidity risk?") with exact-term lookups ("Gross NPA ratio", a specific year). Dense search handles the first well and blurs the second. BM25 covers exact terms, so the two are combined.
 
 **Why a reranker.** The retriever returns a broad candidate set. A cross-encoder rescoring the query and each chunk together puts the most relevant chunks first before they reach the LLM.
 
-**Why XGBoost and SHAP next to an LLM.** An LLM can describe risk but cannot show which inputs drove a score. The XGBoost model gives a numeric risk output and SHAP shows which features pushed it up or down, so a reviewer can check the reasoning.
+**Why a separate ML model next to the LLM.** An LLM can describe risk but cannot show which inputs drove a score, and its numbers can change between runs. The XGBoost model returns a repeatable default probability, and SHAP shows which features pushed it up or down, so a reviewer can check the reasoning.
+
+## ML credit risk
+
+The ML Credit Risk tab takes applicant details (for example savings and checking account status, job level, loan duration and loan purpose) and returns a default probability, a credit score and a risk level. The Explain with SHAP button shows which features drove the prediction.
+
+Example output from the demo:
+
+```json
+{
+  "credit_score": 94,
+  "default_probability": 0.056,
+  "risk_prediction": 0,
+  "risk_level": "LOW"
+}
+```
+
+This model is a demonstration on a public-style tabular credit dataset and must not be used for real lending decisions. In production lending, protected attributes such as sex cannot be used as model inputs.
 
 ## Evaluation
 
-The RAG pipeline is evaluated with RAGAS, LangSmith tracing and an LLM-as-judge check.
+The LLM Evaluation tab runs three checks on any query: custom RAG metrics, RAGAS, and an LLM-as-judge. LangSmith is used for tracing.
+
+Example run (single query: "What are the major business risks?", on the sample document used in the demo):
+
+| Check | Metric | Result |
+| --- | --- | --- |
+| Custom RAG metrics | Context relevance | 0.75 |
+| Custom RAG metrics | Citation score | 1.0 |
+| Custom RAG metrics | Completeness | 1.0 |
+| Custom RAG metrics | Overall RAG score | 0.887 |
+| Custom RAG metrics | Latency | 3.78 s |
+| LLM-as-judge | Faithfulness | 1.0 |
+| LLM-as-judge | Relevance | 1.0 |
+| LLM-as-judge | Citation quality | 1.0 |
+| LLM-as-judge | Completeness | 1.0 |
+
+These figures come from one query on one document. They show what the evaluation tab reports, not a benchmark. A multi-question evaluation is on the roadmap.
 
 ## Tech stack
 
@@ -91,7 +137,7 @@ The RAG pipeline is evaluated with RAGAS, LangSmith tracing and an LLM-as-judge 
 | Retrieval | FAISS, BM25, Sentence Transformers, cross-encoder reranker |
 | Agents | LangGraph |
 | Credit risk | XGBoost, SHAP, Scikit-Learn |
-| Evaluation | RAGAS, LangSmith |
+| Evaluation | RAGAS, LangSmith, LLM-as-judge |
 | PDF processing | PyMuPDF |
 | Deployment | Docker, Docker Compose |
 
@@ -151,7 +197,7 @@ python -m streamlit run frontend/app.py
 | POST | `/documents/upload` | Upload and index a document |
 | POST | `/chat/query` | Source-grounded financial Q&A |
 | POST | `/analysis/financial-summary` | Financial summary |
-| POST | `/analysis/credit-risk` | Credit risk analysis |
+| POST | `/analysis/credit-risk` | Credit risk report |
 | GET | `/kpi/financial-kpis` | KPI extraction |
 | POST | `/agents/financial-intelligence` | Full agentic report |
 | POST | `/analysis/investment-analysis` | Investment analysis |
@@ -193,6 +239,8 @@ finsight-ai/
 
 ## Roadmap
 
+- Multi-question evaluation benchmark on public annual reports
+- Full RAGAS metrics (context precision and recall with reference answers)
 - PostgreSQL for persistent storage
 - JWT authentication
 - Chat history
